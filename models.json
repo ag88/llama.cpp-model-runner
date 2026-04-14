@@ -1,0 +1,43 @@
+{
+  "globals": {
+    "llama_server_cmd": "/usr/local/llama.cpp/bin/llama-server",
+    "ip_address": "127.0.0.1",
+    "port": 8080
+  },
+  "models": [
+    {
+      "model": "gemma-4-26B-A4B-it-UD-Q4_K_M.gguf",
+      "file": "gemma-4-26B-A4B-it-UD-Q4_K_M.gguf",
+      "configs": [
+        {
+          "name": "default",
+          "temp": 1.0,
+          "top-p": 0.95,
+          "top-k": 64
+        }
+      ]
+    },
+    {
+      "model": "Qwen3.5-35B-A3B-Q4_K_M.gguf",
+      "file": "Qwen3.5-35B-A3B-Q4_K_M.gguf",
+      "configs": [
+        {
+          "name": "code",
+          "ctx-size": 16384,
+          "temp": 0.6,
+          "top-p": 0.95,
+          "top-k": 20,
+          "min-p": 0.00
+        },
+        {
+          "name": "general",
+          "ctx-size": 16384,
+          "temp": 1.0,
+          "top-p": 0.95,
+          "top-k": 20,
+          "min-p": 0.00
+        }
+      ]
+    }
+  ]
+}
