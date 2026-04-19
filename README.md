@@ -1,8 +1,8 @@
-# `runmodel.sh` a simple model launcher for llama.cpp / llama-server
+# `runmodel.sh` a simple model launcher for [llama.cpp](https://github.com/ggml-org/llama.cpp) / llama-server
 
 ## Overview
 
-`runmodel.sh` is a wrapper script designed to simplify running `llama-server` from the `llama.cpp` project. It manages multiple LLM models and their respective inference configurations via a centralized JSON file. This script handles argument parsing, configuration validation, and dynamic command construction, allowing users to launch different models with specific hyperparameters (temperature, context size, etc.) without editing the server binary arguments manually.
+`runmodel.sh` is a wrapper script designed to simplify running `llama-server` from the [llama.cpp](https://github.com/ggml-org/llama.cpp) project. It manages multiple LLM models and their respective inference configurations via a centralized JSON file. This script handles argument parsing, configuration validation, and dynamic command construction, allowing users to launch different models with specific hyperparameters (temperature, context size, etc.) without editing the server binary arguments manually.
 
 ## Prerequisites
 
