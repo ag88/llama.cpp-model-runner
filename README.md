@@ -4,6 +4,9 @@
 
 `runmodel.sh` is a wrapper script designed to simplify running `llama-server` from the [llama.cpp](https://github.com/ggml-org/llama.cpp) project. It manages multiple LLM models and their respective inference configurations via a centralized JSON file. This script handles argument parsing, configuration validation, and dynamic command construction, allowing users to launch different models with specific hyperparameters (temperature, context size, etc.) without editing the server binary arguments manually.
 
+note that this is quite similar to the built-in [model presets](https://github.com/ggml-org/llama.cpp/blob/master/docs/preset.md) functionality.
+A slight difference is that the ``models.json`` used in this script provides for multiple configs (minimum 1) sets with each model, so that you can launch the model with with the model label (uses 1st set of configs) or model + selected config (e.g. code, general, agent, etc)
+
 ## Prerequisites
 
 Before running the script, ensure the following dependencies are installed on your system:
