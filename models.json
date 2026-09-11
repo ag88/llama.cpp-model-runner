@@ -1,6 +1,7 @@
 {
   "globals": {
     "llama_server_cmd": "/usr/local/llama.cpp/bin/llama-server",
+    "ld_library_path": "/usr/local/llama.cpp/lib64",
     "ip_address": "127.0.0.1",
     "port": 8080
   },

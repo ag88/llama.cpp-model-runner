@@ -81,6 +81,13 @@ resolve_global_vars() {
             PORT="$val"
         fi
     fi
+
+    # Resolve LD_LIBRARY_PATH
+    val=$(jq -r '.globals.ld_library_path // empty' "$CONFIG_FILE" 2>/dev/null)
+    if [[ -n "$val" ]]; then
+        export LD_LIBRARY_PATH="${val}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+        log_info "LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+    fi
 }
 
 run_model() {
@@ -133,7 +140,7 @@ run_model() {
         if [ -n "$key" ]; then
             cmd_args+=("--${key}" "$value")
         fi
-    done < <(jq -r '.globals // empty | to_entries | map(select(.key != "llama_server_cmd" and .key != "ip_address" and .key != "port")) | .[] | "\(.key)=\(.value)"' "$CONFIG_FILE" 2>/dev/null)
+    done < <(jq -r '.globals // empty | to_entries | map(select(.key != "llama_server_cmd" and .key != "ip_address" and .key != "port" and .key != "ld_library_path")) | .[] | "\(.key)=\(.value)"' "$CONFIG_FILE" 2>/dev/null)
 
     # Add config parameters from JSON
     # We iterate over the JSON object keys/values safely
