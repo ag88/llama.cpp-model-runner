@@ -32,8 +32,11 @@ The `models.json` file defines available models, their file paths, and specific 
 {
   "globals": {
     "llama_server_cmd": "/usr/local/llama.cpp/bin/llama-server",
+    "ld_library_path": "/usr/local/llama.cpp/lib64",
     "ip_address": "127.0.0.1",
-    "port": 8080
+    "port": 8080,
+    "default_model": "Qwen3.5-35B-A3B-Q4_K_M.gguf",
+    "default_config": "general"
   },
   "models": [
     {
@@ -90,9 +93,12 @@ The `models` array is the core definition of available LLMs. It contains a list 
 The `globals` object defines server-wide defaults that apply to all models unless overridden in the script.
 
 *   **`llama_server_cmd`**: The full path to the `llama-server` executable.
+*   **`ld_library_path`**: Optional library path exported before launching the server.
 *   **`ip_address`**: The hostname or IP address the server should bind to (default is `127.0.0.1`).
 *   **`port`**: The TCP port number for the server to listen on (default is `8080`).
-*   **Other Globals**: Any additional keys in this object (excluding `llama_server_cmd`, `ip_address`, `port`) will be passed as command-line arguments to the server.
+*   **`default_model`**: The model to launch when using `--rundefault`.
+*   **`default_config`**: The config name to use with `default_model` when using `--rundefault`.
+*   **Other Globals**: Any additional keys in this object (excluding `llama_server_cmd`, `ip_address`, `port`, `ld_library_path`, `default_model`, and `default_config`) will be passed as command-line arguments to the server.
 
 ### Configuration Overrides
 
@@ -151,6 +157,7 @@ chmod +x runmodel.sh
 | **Help** | `-h`, `--help` | Display usage instructions. |
 | **List** | `-l`, `--list` | List all available models and their configurations. |
 | **Info** | `-i`, `--info` | Show detailed configuration info for a specific model. |
+| **Run default** | `-d`, `--rundefault` | Run the configured default model and config from `globals.default_model` / `globals.default_config`. |
 | **File** | `-f`, `--file` | Specify a custom configuration JSON file (default: `models.json`). |
 
 ## Examples
@@ -168,6 +175,11 @@ chmod +x runmodel.sh
 **Run a model with a specific configuration (e.g., "code"):**
 ```bash
 ./runmodel.sh Qwen3.5-35B-A3B-Q4_K_M.gguf code
+```
+
+**Run the configured default model/config from `models.json`:**
+```bash
+./runmodel.sh --rundefault
 ```
 
 **Show detailed info for a specific model:**
