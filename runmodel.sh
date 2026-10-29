@@ -134,19 +134,23 @@ run_model() {
     fi
 
     # Add extra globals from models.json (excluding handled keys)
-    # Excluded keys: llama_server_cmd, ip_address, port
+    # Excluded keys: llama_server_cmd, ip_address, port, ld_library_path, default_model, default_config
     local key value
     while IFS='=' read -r key value; do
         if [ -n "$key" ]; then
             cmd_args+=("--${key}" "$value")
         fi
-    done < <(jq -r '.globals // empty | to_entries | map(select(.key != "llama_server_cmd" and .key != "ip_address" and .key != "port" and .key != "ld_library_path")) | .[] | "\(.key)=\(.value)"' "$CONFIG_FILE" 2>/dev/null)
+    done < <(jq -r '.globals // empty | to_entries | map(select(.key != "llama_server_cmd" and .key != "ip_address" and .key != "port" and .key != "ld_library_path" and .key != "default_model" and .key != "default_config" )) | .[] | "\(.key)=\(.value)"' "$CONFIG_FILE" 2>/dev/null)
 
     # Add config parameters from JSON
     # We iterate over the JSON object keys/values safely
     while IFS='=' read -r key value; do
         if [ -n "$key" ]; then
-            cmd_args+=("--${key}" "$value")
+	    if [ "$value" == "null" ]; then
+                cmd_args+=("--${key}")
+	    else
+                cmd_args+=("--${key}" "$value")
+	    fi
         fi
     done < <(echo "$config_data" | jq -r 'to_entries | map(select(.key != "name") | "\(.key)=\(.value)") | join("\n")')
 
@@ -193,6 +197,7 @@ Options:
   -h, --help      Show this help message
   -l, --list      List all available models and configurations
   -i, --info      Show detailed information about a specific model
+  -d, --rundefault  Run the default model/config from models.json globals
   -f, --file      Specify configuration file (default: models.json)
 
 Examples:
@@ -201,13 +206,14 @@ Examples:
   $0 -l
   $0 -i model.gguf
   $0 -f custom_models.json model.gguf
+  $0 --rundefault
 EOF
 }
 
 # --- Argument Parsing ---
 # Use GNU getopt for long options. 
 # Note: On macOS, install 'coreutils' to ensure 'getopt' supports --long
-PARSED=$(getopt -o hli:f: --long help,list,info:,file: -n "$0" -- "$@")
+PARSED=$(getopt -o hli:df: --long help,list,info:,file:,rundefault -n "$0" -- "$@")
 if [ $? -ne 0 ]; then
     log_error "Failed to parse arguments"
     print_usage
@@ -236,6 +242,10 @@ while true; do
             ACTION="info"
             MODEL_NAME="${2:-}"  # FIX: Safe expansion for unset variable
             shift 2
+            ;;
+        -d|--rundefault)
+            ACTION="rundefault"
+            shift
             ;;
         -f|--file)
             CONFIG_FILE="${2:-}" # FIX: Safe expansion for unset variable
@@ -279,6 +289,16 @@ case "$ACTION" in
             exit 1
         fi
         show_model_info "$MODEL_NAME"
+        exit 0
+        ;;
+    rundefault)
+        default_model=$(jq -r '.globals.default_model // empty' "$CONFIG_FILE" 2>/dev/null)
+        default_config=$(jq -r '.globals.default_config // empty' "$CONFIG_FILE" 2>/dev/null)
+        if [ -z "$default_model" ]; then
+            log_error "globals.default_model not set in configuration file"
+            exit 1
+        fi
+        run_model "$default_model" "$default_config"
         exit 0
         ;;
     "")
