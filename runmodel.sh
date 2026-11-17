@@ -140,7 +140,7 @@ run_model() {
         if [ -n "$key" ]; then
             cmd_args+=("--${key}" "$value")
         fi
-    done < <(jq -r '.globals // empty | to_entries | map(select(.key != "llama_server_cmd" and .key != "ip_address" and .key != "port" and .key != "ld_library_path" and .key != "default_model" and .key != "default_config" )) | .[] | "\(.key)=\(.value)"' "$CONFIG_FILE" 2>/dev/null)
+done < <(jq -r '.globals // empty | to_entries | map(select(.key != "llama_server_cmd" and .key != "ip_address" and .key != "port" and .key != "ld_library_path" and .key != "default_model" and .key != "default_config" and ! startswith("_") )) | .[] | "\(.key)=\(.value)"' "$CONFIG_FILE" 2>/dev/null)
 
     # Add config parameters from JSON
     # We iterate over the JSON object keys/values safely

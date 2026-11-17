@@ -99,6 +99,8 @@ The `globals` object defines server-wide defaults that apply to all models unles
 *   **`default_model`**: The model to launch when using `--rundefault`.
 *   **`default_config`**: The config name to use with `default_model` when using `--rundefault`.
 *   **Other Globals**: Any additional keys in this object (excluding `llama_server_cmd`, `ip_address`, `port`, `ld_library_path`, `default_model`, and `default_config`) will be passed as command-line arguments to the server.
+*   **_keyname (underscore prefix keys) are ignored** keynames starting with an "_" underscore prefix e.g. `{ "_keyname" : "value" }` are ignored.
+    Hence you can use "_keyname" to deactivate some keys e.g. with "_default_model" while leaving the original items e.g. "default_model" in config.
 
 ### Configuration Overrides
 
